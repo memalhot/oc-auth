@@ -37,5 +37,15 @@ oc get ns | grep "^${CLASS_NAME}-" | awk '{print $1}' | while read ns; do
         --serviceaccount="$ns:default" -n "$ns" \
         --as system:admin
 
+    oc create role default-kueue-localqueue-reader \
+        --verb=get,list,watch \
+        --resource=localqueues.kueue.x-k8s.io -n "$ns" \
+        --as system:admin
+        
+    oc create rolebinding kueue-localqueue-reader \
+        --role=default-kueue-localqueue-reader
+        --serviceaccount="$ns:default" -n "$ns" \
+        --as system:admin
+        
     echo " "
 done
